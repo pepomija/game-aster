@@ -32,7 +32,10 @@ pub fn main() anyerror!void {
     rl.initAudioDevice();
     defer rl.closeAudioDevice();
 
-    const music = rl.loadMusicStream("resources/rocket_booster.wav");
+    // Embed file in binary at compile time
+    const wavFile = @embedFile("resources/rocket_booster.wav");
+
+    const music = rl.loadMusicStreamFromMemory(".wav", wavFile);
     defer rl.unloadMusicStream(music);
 
     rl.setTargetFPS(60); // Set our game to run at 60 frames-per-second
