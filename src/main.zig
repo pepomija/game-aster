@@ -28,7 +28,12 @@ pub fn main() anyerror!void {
 
     rl.initWindow(initialScreenWidth, initialScreenHeight, "raylib-zig [core] example - basic window");
     defer rl.closeWindow(); // Close window and OpenGL context
-    // rl.setExitKey(.key_null);
+
+    rl.initAudioDevice();
+    defer rl.closeAudioDevice();
+
+    const music = rl.loadMusicStream("resources/rocket_booster.wav");
+    defer rl.unloadMusicStream(music);
 
     rl.setTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -39,12 +44,17 @@ pub fn main() anyerror!void {
 
         // Update
         //----------------------------------------------------------------------------------
+
+        rl.updateMusicStream(music);
+
         var playerAcceleration = rl.Vector2{ .x = 0, .y = 0 };
 
-        if (rl.isKeyDown(.key_up)) {
+        if (player.thrusting == false and rl.isKeyDown(.key_up)) {
             player.thrusting = true;
-        } else {
+            rl.playMusicStream(music);
+        } else if (player.thrusting == true and rl.isKeyUp(.key_up)) {
             player.thrusting = false;
+            rl.stopMusicStream(music);
         }
 
         if (rl.isKeyDown(.key_down)) {}
@@ -84,7 +94,5 @@ pub fn main() anyerror!void {
         rl.drawCircleV(player.position, 3, rl.Color.red);
         const lineEnd = rl.math.vector2Add(player.position, rl.math.vector2Scale(player.facing, 10));
         rl.drawLineEx(player.position, lineEnd, 2, rl.Color.black);
-
-        //----------------------------------------------------------------------------------
     }
 }

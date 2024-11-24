@@ -30,5 +30,5 @@ error: unable to find dynamic system library 'X11' using strategy 'paths_first'.
 Running the following command will address it:
 
 ```sh
-sudo apt install libgtk-4-
+sudo apt install libgtk-4-1
 ```
